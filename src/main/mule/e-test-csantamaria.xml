@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+    <http:listener-config name="e-test-csantamaria-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+    <apikit:config name="e-test-csantamaria-config" api="resource::770150f4-32e5-4c47-aa49-6cd1ce6183b4:e-test-csantamaria:1.0.1:raml:zip:e-test-csantamaria.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="83df87c6-ec23-4b14-afcd-45aa058aab46" >
+		<http:request-connection host="p-test-csantamaria.us-e2.cloudhub.io" port="80" />
+	</http:request-config>
+	<api-gateway:autodiscovery apiId="${secure::encrypted.api_id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="2ec7e9c2-c0ce-4b0d-bb0b-2fe3bbd6d0cf" flowRef="e-test-csantamaria-main" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="f1b7f1c2-98c0-46ed-9359-3d0c0be07658" file="secure.properties" key="PwbYVY5#%#db,M9af]9&amp;NtUg-u.KY;Ah" encoding="UTF-8" />
+	<flow name="e-test-csantamaria-main">
+        <http:listener config-ref="e-test-csantamaria-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <logger level="INFO" doc:name="START (INFO)" doc:id="1bea5de7-442a-4be9-be6c-6b1234f2f0e8" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"tracepoint": "START",&#10;	"callId": correlationId,&#10;	"time": now() &gt;&gt; "Europe/Madrid",&#10;	"payload": payload&#10;}]'/>
+		<apikit:router config-ref="e-test-csantamaria-config" />
+        <logger level="INFO" doc:name="END (INFO)" doc:id="bb45f0a8-7b6c-4080-9b51-7b0dd68d7018" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"tracepoint": "START",&#10;	"callId": correlationId,&#10;	"time": now() &gt;&gt; "Europe/Madrid",&#10;	"payload": payload&#10;}]'/>
+		<error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="e-test-csantamaria-console">
+        <http:listener config-ref="e-test-csantamaria-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="e-test-csantamaria-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\accounts:e-test-csantamaria-config">
+        <logger level="INFO" doc:name="START (INFO)" doc:id="3ee23fd6-3468-40db-b7f1-0801cb1a7ee5" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"tracepoint": "START",&#10;	"callId": correlationId,&#10;	"time": now() &gt;&gt; "Europe/Madrid",&#10;	"payload": payload&#10;}]'/>
+		<http:request method="GET" doc:name="Request" doc:id="84a9b6ab-a983-4ccc-b16e-22aa8aa2129f" config-ref="HTTP_Request_configuration" path="/api/accounts">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p("secure::encrypted.client_secret"),
+	"client_id" : Mule::p("secure::encrypted.client_id")
+}]]]></http:headers>
+		</http:request>
+		<logger level="DEBUG" doc:name="Logger" doc:id="fe4d2a10-b8b4-4254-b6ed-5cbf17d85ee4" message='#[payload]'/>
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+[
+  {
+    id: 1,
+    name: "John Smith",
+    email: "john.smith@example.com"
+  }
+&#93; as Array {encoding: "UTF-8", mediaType: "application/json"}&#93;&#93;></ee:set-payload>
+            </ee:message>
+        </ee:transform> [STUDIO] -->
+		<ee:transform doc:name="Transform Message" doc:id="dc115bfd-8b48-485d-b5a2-82aa7bc7ed55" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="END (INFO)" doc:id="923796f7-9739-4d09-a54b-2da8cca0689d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"tracepoint": "START",&#10;	"callId": correlationId,&#10;	"time": now() &gt;&gt; "Europe/Madrid",&#10;	"payload": payload&#10;}]'/>
+    </flow>
+</mule>
