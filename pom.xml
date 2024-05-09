@@ -34,7 +34,7 @@
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>4.6-e-java8</muleVersion>
 						<username>csantamariagracia</username>
-						<password>Uy;2d'n)/",aE-VU</password>
+						<password>h243Q6lxS9pQP7g4</password>
 						<applicationName>e-test-csantamaria</applicationName>
 						<environment>Sandbox</environment>
 						<region>us-east-2</region>
@@ -97,6 +97,12 @@
 			<id>mulesoft-releases</id>
 			<name>MuleSoft Releases Repository</name>
 			<url>https://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>Repository</id>
+			<name>Corporate Repository</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/770150f4-32e5-4c47-aa49-6cd1ce6183b4/maven</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
