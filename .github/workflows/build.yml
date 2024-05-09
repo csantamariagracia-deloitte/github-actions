@@ -27,7 +27,7 @@ jobs:
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-        servers: '[{ "id": "Repository", "username": "csantamariagracia", "password": "Uy;2d'n)/",aE-VU" }]'
+        servers: '[{ "id": "Repository", "username": "csantamariagracia", "password": "Uy;2d'n)/\",aE-VU" }]'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Stamp artifact file name with commit hash
