@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>770150f4-32e5-4c47-aa49-6cd1ce6183b4</groupId>
-	<artifactId>e-test-csantamaria</artifactId>
+	<groupId>347becf9-c0cf-42dc-8b3a-ed94ee28dc4c</groupId>
+	<artifactId>e-test-csantamaria2</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
 
-	<name>e-test-csantamaria</name>
+	<name>e-test-csantamaria2</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,8 +33,8 @@
 					<cloudHubDeployment>
 						<uri>https://anypoint.mulesoft.com</uri>
 						<muleVersion>4.6-e-java8</muleVersion>
-						<username>csantamariagracia</username>
-						<password>h243Q6lxS9pQP7g4</password>
+						<username>csantamariagracia2</username>
+						<password>4jV145qUcR28kC4N</password>
 						<applicationName>e-test-csantamaria</applicationName>
 						<environment>Sandbox</environment>
 						<region>us-east-2</region>
@@ -102,7 +102,7 @@
 		<repository>
 			<id>Repository</id>
 			<name>Corporate Repository</name>
-			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/770150f4-32e5-4c47-aa49-6cd1ce6183b4/maven</url>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/347becf9-c0cf-42dc-8b3a-ed94ee28dc4c/maven</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
