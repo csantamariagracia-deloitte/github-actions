@@ -31,7 +31,7 @@ jobs:
     - name: Build with Maven
       run: |
         cat /home/runner/.m2/settings.xml
-        mvn -B package --file pom.xml -s /home/runner/m.2/settings.xml
+        mvn -B package --file pom.xml -s /home/runner/.m2/settings.xml
     - name: Stamp artifact file name with commit hash
       run: |
         artifactName1=$(ls target/*.jar | head -1)
