@@ -161,7 +161,7 @@ output application/json
 [
   {
     id: 1,
-    name: "John Smith (API System)",
+    name: "John Smith",
     email: "john.smith@example.com"
   }
 ] as Array {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
