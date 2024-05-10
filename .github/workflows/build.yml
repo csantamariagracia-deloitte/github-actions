@@ -27,7 +27,7 @@ jobs:
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-        servers: '[{ "id": "Repository", "username": "csantamariagracia2", "password": "4jV145qUcR28kC4N" }]'
+        servers: '[{ "id": "Repository", "username": "csantamariagracia", "password": "4jV145qUcR28kC4N" }]'
     - name: Build with Maven
       run: |
         cat /home/runner/.m2/settings.xml
