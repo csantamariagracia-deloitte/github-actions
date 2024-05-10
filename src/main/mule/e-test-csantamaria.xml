@@ -12,6 +12,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	</http:request-config>
 	<api-gateway:autodiscovery apiId="${secure::encrypted.api_id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="2ec7e9c2-c0ce-4b0d-bb0b-2fe3bbd6d0cf" flowRef="e-test-csantamaria-main" />
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="f1b7f1c2-98c0-46ed-9359-3d0c0be07658" file="secure.properties" key="PwbYVY5#%#db,M9af]9&amp;NtUg-u.KY;Ah" encoding="UTF-8" />
+	<configuration-properties doc:name="Configuration properties" doc:id="1c191148-df24-4cc7-8a84-afe430b3fab7" file="config.properties" />
 	<flow name="e-test-csantamaria-main">
         <http:listener config-ref="e-test-csantamaria-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -135,21 +136,35 @@ output application/json
     </flow>
     <flow name="get:\accounts:e-test-csantamaria-config">
         <logger level="INFO" doc:name="START (INFO)" doc:id="3ee23fd6-3468-40db-b7f1-0801cb1a7ee5" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"tracepoint": "START",&#10;	"callId": correlationId,&#10;	"time": now() &gt;&gt; "Europe/Madrid",&#10;	"payload": payload&#10;}]'/>
-		<http:request method="GET" doc:name="Request" doc:id="84a9b6ab-a983-4ccc-b16e-22aa8aa2129f" config-ref="HTTP_Request_configuration" path="/api/accounts">
+		<!-- [STUDIO:"Request"]<http:request method="GET" doc:name="Request" doc:id="84a9b6ab-a983-4ccc-b16e-22aa8aa2129f" config-ref="HTTP_Request_configuration" path="/api/accounts">
 			<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"client_secret" : Mule::p("secure::encrypted.client_secret"),
 	"client_id" : Mule::p("secure::encrypted.client_id")
-}]]]></http:headers>
-		</http:request>
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
 		<logger level="DEBUG" doc:name="Logger" doc:id="fe4d2a10-b8b4-4254-b6ed-5cbf17d85ee4" message='#[payload]'/>
-		<ee:transform doc:name="Transform Message" doc:id="dc115bfd-8b48-485d-b5a2-82aa7bc7ed55" >
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="dc115bfd-8b48-485d-b5a2-82aa7bc7ed55" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
+&#45;&#45;-
+payload&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform> [STUDIO] -->
+		<ee:transform doc:name="Transform Message" doc:id="7f87441a-33e0-4e38-b986-fb8f3b12cc6f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
 ---
-payload]]></ee:set-payload>
+[
+  {
+    id: 1,
+    name: "John Smith (API System)",
+    email: "john.smith@example.com"
+  }
+] as Array {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="END (INFO)" doc:id="923796f7-9739-4d09-a54b-2da8cca0689d" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"tracepoint": "START",&#10;	"callId": correlationId,&#10;	"time": now() &gt;&gt; "Europe/Madrid",&#10;	"payload": payload&#10;}]'/>
