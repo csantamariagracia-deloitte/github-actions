@@ -35,7 +35,7 @@
 						<muleVersion>4.6-e-java8</muleVersion>
 						<username>csantamariagracia2</username>
 						<password>4jV145qUcR28kC4N</password>
-						<applicationName>e-test-csantamaria</applicationName>
+						<applicationName>e-test-csantamaria2</applicationName>
 						<environment>Sandbox</environment>
 						<region>us-east-2</region>
 						<workers>1</workers>
